@@ -26,7 +26,8 @@ enum class Direction {
     NORTH = 1,
     EAST = 2,
     SOUTH = 4,
-    WEST = 8
+    WEST = 8,
+    ALL = 15
 };
 
 // Overload | operator.
@@ -57,6 +58,28 @@ const std::unordered_map<Direction, std::pair<int, int>> direction_offset{
         {Direction::WEST,  {0,  -1}}
 };
 
+
+const std::unordered_map<Direction, std::vector<std::vector<int>>> direction_blown{
+        {Direction::NORTH | Direction::SOUTH, {{-1, 1, -1},
+                                               {-1,  1, -1},
+                                               {-1, 1, -1}}},
+        {Direction::WEST | Direction::EAST, {{-1, -1, -1},
+                                             {1, 1, 1},
+                                             {-1, -1, -1}}},
+        {Direction::NORTH | Direction::EAST, {{-1, 1, -1},
+                                              {-1, 1, 1},
+                                              {-1, -1, -1}}},
+        {Direction::NORTH | Direction::WEST, {{-1, 1, -1},
+                                              {1, 1, -1},
+                                              {-1, -1, -1}}},
+        {Direction::SOUTH | Direction::WEST, {{-1, -1, -1},
+                                              {1, 1, -1},
+                                              {-1, 1, -1}}},
+        {Direction::SOUTH | Direction::EAST, {{-1, -1, -1},
+                                              {-1, 1, 1},
+                                              {-1, 1, -1}}},
+};
+
 using GridRow = std::vector<Direction>;
 using Grid = std::vector<GridRow>;
 
@@ -75,8 +98,14 @@ int do_puzzle_2(std::ifstream &file);
 
 void calculate_start_directions(Grid &grid, const std::pair<int, int> &start);
 
-int get_steps_to_farthest_tile(const Grid &grid, const std::pair<int, int> &start);
+std::vector<std::vector<int>> get_steps_grid(const Grid &grid, const std::pair<int, int> &start);
+
+int get_steps_to_farthest_tile(std::vector<std::vector<int>> steps_grid);
+
+int get_enclosed_tiles(const Grid &grid, std::vector<std::vector<int>> steps_grid);
 
 std::vector<std::pair<int, int>> get_offsets(Direction direction);
+
+void flood_fill(std::vector<std::vector<int>> &blown_grid, const std::pair<int, int> &start);
 
 #endif //PUZZLE_H
